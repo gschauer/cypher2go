@@ -1,0 +1,48 @@
+name: Build
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - Makefile
+  pull_request:
+    branches: [master]
+    paths:
+      - Makefile
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'microsoft'
+          java-version: '17'
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: '>=1.18.0'
+      - name: Cache Go modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.OS }}-go-
+      - name: Build
+        run: make all
+      - name: Commit generated code
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Update generated code
+          file_pattern: go.* parser/*.go
+          push_options: '--force'
+          skip_fetch: true
+          skip_checkout: true

@@ -1,0 +1,22 @@
+### Go
+*.test
+*.out
+
+### JetBrains
+.idea/
+out/
+*.iml
+
+### VisualStudioCode
+.vscode/
+
+### Generator
+Cypher_orig.g4
+*.jar
+
+### misc
+bin/
+dist/
+tmp/
+*.log
+*.tmp
